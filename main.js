@@ -5,4 +5,4 @@ export const exports = instance.exports;
 console.log(exports);
 export const memory = exports.memory;
 
-exports.init()
+exports._start()

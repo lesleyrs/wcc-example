@@ -1,20 +1,26 @@
+OUT = a.wasm
+OPT = wasm-opt a.wasm --enable-bulk-memory -o a.wasm -Oz && wasm-strip a.wasm
+FLAGS = -std=c99 -nostdlib -Wl,--export-all -Wl,--allow-undefined
+# -Wl,--no-entry
+
 all:
-	clang --target=wasm32 -std=c99 main.c -g -nostdlib -Wl,--no-entry -Wl,--export-all -Wl,--allow-undefined -mbulk-memory -o a.wasm
+	clang --target=wasm32 main.c $(FLAGS) -g -mbulk-memory -o $(OUT)
 
 opt:
-	clang --target=wasm32 main.c -Oz -flto -nostdlib -Wl,--no-entry -Wl,--export-all -Wl,--allow-undefined -o a.wasm && wasm-opt a.wasm -o a.wasm -Oz && wasm-strip a.wasm
+	clang --target=wasm32 main.c $(FLAGS) -Oz -flto -o $(OUT)
+	$(OPT)
 
 wcc:
-	../xcc/wcc --verbose -std=c99 main.c -nostdlib --entry-point= -e=init -e=strlen -Wl,--allow-undefined
+	../xcc/wcc main.c $(FLAGS) --verbose
 
-wcc-opt:
-	../xcc/wcc --verbose -std=c99 main.c -nostdlib --entry-point= -e=init -e=strlen -Wl,--allow-undefined && wasm-opt a.wasm -o a.wasm -Oz && wasm-strip a.wasm
+wcc-opt: wcc
+	$(OPT)
 
 decomp:
-	wasm-decompile a.wasm
+	wasm-decompile $(OUT)
 
 objdump:
-	wasm-objdump a.wasm -x
+	wasm-objdump $(OUT) -x
 
 serve:
 	python3 -m http.server

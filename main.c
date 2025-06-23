@@ -9,7 +9,7 @@ size_t strlen(const char *s) {
     return s - a;
 }
 
-int init(int argc, char **argv) {
+int _start(int argc, char **argv) {
     (void)argc, (void)argv;
     puts("test 😊😊😊😊😊😊😊😊\n");
     return 0;
