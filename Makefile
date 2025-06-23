@@ -1,17 +1,17 @@
 OUT = a.wasm
-OPT = wasm-opt a.wasm --enable-bulk-memory -o a.wasm -Oz && wasm-strip a.wasm
-FLAGS = -std=c99 -nostdlib -Wl,--export-all -Wl,--allow-undefined
-# -Wl,--no-entry
+OPT = wasm-opt $(OUT) --enable-bulk-memory -o $(OUT) -Oz && wasm-strip $(OUT)
+SRCS = main.c
+FLAGS = -std=c99 -nostdlib -Wl,--export-all -Wl,--allow-undefined $(SRCS)
 
 all:
-	clang --target=wasm32 main.c $(FLAGS) -g -mbulk-memory -o $(OUT)
+	clang $(FLAGS) --target=wasm32 -g -mbulk-memory -o $(OUT)
 
 opt:
-	clang --target=wasm32 main.c $(FLAGS) -Oz -flto -o $(OUT)
+	clang $(FLAGS) --target=wasm32 -Oz -flto -o $(OUT)
 	$(OPT)
 
 wcc:
-	../xcc/wcc main.c $(FLAGS) --verbose
+	../xcc/wcc $(FLAGS) --verbose
 
 wcc-opt: wcc
 	$(OPT)
